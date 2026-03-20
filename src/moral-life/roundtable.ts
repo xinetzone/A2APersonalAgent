@@ -37,6 +37,13 @@ const AGENT_DEFINITIONS: Record<AgentType, { name: string; description: string; 
     quote: '知足者富',
     philosophy: '让道德价值在流通中得以实现',
   },
+  participant: {
+    name: '讨论参与者',
+    description: '参与道德讨论的真实用户',
+    specialty: '分享观点、参与讨论、贡献洞察',
+    quote: '兼听则明',
+    philosophy: '每个人都有独特的视角和智慧',
+  },
 };
 
 function stableHash(input: string): number {

@@ -3,7 +3,7 @@
 import { AuthProvider } from './context/AuthContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BookOpen, Home, Search, Users, Award, Sword, Wallet, Map, User } from 'lucide-react';
+import { BookOpen, Home, Search, Users, Award, Sword, Wallet, Map, User, Coffee } from 'lucide-react';
 import { memo, useMemo } from 'react';
 import { Toaster } from 'sonner';
 
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: '/training', icon: Sword, label: '修炼' },
   { href: '/credit', icon: Award, label: '信誉' },
   { href: '/town', icon: Map, label: '小镇' },
+  { href: '/space', icon: Coffee, label: '空间' },
   { href: '/wallet', icon: Wallet, label: '钱包' },
   { href: '/profile', icon: User, label: '我的' },
 ] as const;

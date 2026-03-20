@@ -17,7 +17,7 @@ export type DaoGuidance = {
   practices: string[];
 };
 
-export type AgentType = 'daoist' | 'confucian' | 'philosopher' | 'scenario' | 'merchant';
+export type AgentType = 'daoist' | 'confucian' | 'philosopher' | 'scenario' | 'merchant' | 'participant';
 
 export type AgentRole = {
   id: string;
@@ -266,3 +266,44 @@ export type VirtualWorldState = {
   }[];
   recentExperiences: ImmersiveExperience[];
 };
+
+export interface RoundTableSpace {
+  id: string;
+  type: 'dao-space';
+  name: string;
+  description: string;
+  status: 'active' | 'idle' | 'closed';
+  hostAgentId: string;
+  hostUserId: string;
+  currentTopic?: string;
+  participants: SpaceParticipant[];
+  maxParticipants: number;
+  createdAt: number;
+  updatedAt: number;
+  metadata: {
+    topicId?: string;
+    roundTableId?: string;
+    marketStalls?: string[];
+    zhihuHotTopics?: string[];
+  };
+}
+
+export interface CreateRoundTableParams {
+  hostAgentId: string;
+  hostUserId: string;
+  dilemma: string;
+  focus?: string;
+  agents?: AgentType[];
+  maxRounds?: number;
+  topicId?: string;
+}
+
+interface SpaceParticipant {
+  agentId: string;
+  userId: string;
+  role: 'host' | 'participant' | 'lurker';
+  joinedAt: number;
+  lastActiveAt: number;
+  messageCount: number;
+  trustScore: number;
+}

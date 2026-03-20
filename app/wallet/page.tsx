@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { Wallet, Coins, Gift, ArrowUpDown, Plus, History, Shield, CheckCircle, XCircle, AlertCircle, Settings, Lock, User, Eye, EyeOff } from 'lucide-react';
+import { Wallet, Coins, Gift, ArrowUpDown, Plus, History, Shield, CheckCircle, XCircle, AlertCircle, Settings, Lock, User, Eye, EyeOff, ChevronLeft, ChevronRight, CreditCard, TrendingUp, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
 
@@ -130,9 +130,20 @@ export default function WalletPage() {
   const [securityCode, setSecurityCode] = useState('');
   const [step, setStep] = useState<'auth' | 'config' | 'security' | 'confirm' | 'creating' | 'complete'>('auth');
   const [networkError, setNetworkError] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [transactionsPerPage] = useState(5);
+  const [displayedTransactions, setDisplayedTransactions] = useState<WalletSummary['recentTransactions']>([]);
+  const [showSpendModal, setShowSpendModal] = useState(false);
+  const [showDonationModal, setShowDonationModal] = useState(false);
+  const [showTrustModal, setShowTrustModal] = useState(false);
+  const [spendAmount, setSpendAmount] = useState('');
+  const [donationAmount, setDonationAmount] = useState('');
+  const [trustAmount, setTrustAmount] = useState('');
 
   const getUserId = useCallback(() => {
-    return user?.id || `user-${Date.now()}`;
+    if (user?.id) return user.id;
+    if (user?.email) return `user-${btoa(user.email).slice(0, 8)}`;
+    return `user-${Date.now()}`;
   }, [user]);
 
   const fetchWallet = async () => {
@@ -336,6 +347,14 @@ export default function WalletPage() {
       fetchWallet();
     }
   }, [isAuthenticated, user]);
+
+  useEffect(() => {
+    if (summary?.recentTransactions) {
+      const start = (currentPage - 1) * transactionsPerPage;
+      const end = start + transactionsPerPage;
+      setDisplayedTransactions(summary.recentTransactions.slice(start, end));
+    }
+  }, [summary, currentPage, transactionsPerPage]);
 
   const renderAuthStep = () => (
     <div className="space-y-6">
@@ -897,31 +916,257 @@ export default function WalletPage() {
 
           <section className="dao-card">
             <h2 className="text-lg font-semibold text-dao-primary mb-4 flex items-center gap-2">
+              <TrendingUp className="w-5 h-5" />
+              钱包操作
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <button
+                onClick={() => setShowSpendModal(true)}
+                className="p-4 bg-red-50 rounded-lg hover:bg-red-100 transition-colors text-left flex flex-col gap-1"
+                disabled={loading}
+              >
+                <ArrowDownCircle className="w-5 h-5 text-red-600" />
+                <p className="font-medium text-red-800">消费积分</p>
+                <p className="text-xs text-red-600">课程/书籍交换</p>
+              </button>
+              <button
+                onClick={() => setShowDonationModal(true)}
+                className="p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition-colors text-left flex flex-col gap-1"
+                disabled={loading}
+              >
+                <Gift className="w-5 h-5 text-purple-600" />
+                <p className="font-medium text-purple-800">捐赠功德</p>
+                <p className="text-xs text-purple-600">帮助有需要的人</p>
+              </button>
+              <button
+                onClick={() => setShowTrustModal(true)}
+                className="p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors text-left flex flex-col gap-1"
+                disabled={loading}
+              >
+                <CreditCard className="w-5 h-5 text-blue-600" />
+                <p className="font-medium text-blue-800">使用额度</p>
+                <p className="text-xs text-blue-600">信任额度借款</p>
+              </button>
+              <button
+                onClick={() => {
+                  toast.info('境界提升功能开发中，请积累更多功德后尝试');
+                }}
+                className="p-4 bg-amber-50 rounded-lg hover:bg-amber-100 transition-colors text-left flex flex-col gap-1"
+                disabled={loading}
+              >
+                <TrendingUp className="w-5 h-5 text-amber-600" />
+                <p className="font-medium text-amber-800">提升境界</p>
+                <p className="text-xs text-amber-600">消耗100功德</p>
+              </button>
+            </div>
+          </section>
+
+          <section className="dao-card">
+            <h2 className="text-lg font-semibold text-dao-primary mb-4 flex items-center gap-2">
               <History className="w-5 h-5" />
               最近交易
             </h2>
             {summary.recentTransactions.length === 0 ? (
               <p className="text-center text-gray-500 py-8">暂无交易记录</p>
             ) : (
-              <div className="space-y-3">
-                {summary.recentTransactions.map((tx) => (
-                  <div key={tx.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
-                    <div className="flex items-center gap-3">
-                      {getTransactionIcon(tx.type)}
-                      <div>
-                        <p className="text-sm text-gray-800">{tx.source || tx.target || tx.note || '交易'}</p>
-                        <p className="text-xs text-gray-500">{new Date(tx.date).toLocaleDateString('zh-CN')}</p>
+              <>
+                <div className="space-y-3">
+                  {displayedTransactions.map((tx) => (
+                    <div key={tx.id} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                      <div className="flex items-center gap-3">
+                        {getTransactionIcon(tx.type)}
+                        <div>
+                          <p className="text-sm text-gray-800">{tx.source || tx.target || tx.note || '交易'}</p>
+                          <p className="text-xs text-gray-500">{new Date(tx.date).toLocaleDateString('zh-CN')}</p>
+                        </div>
                       </div>
+                      <span className={`font-bold ${getTransactionColor(tx.amount)}`}>
+                        {tx.amount > 0 ? '+' : ''}{tx.amount}
+                      </span>
                     </div>
-                    <span className={`font-bold ${getTransactionColor(tx.amount)}`}>
-                      {tx.amount > 0 ? '+' : ''}{tx.amount}
+                  ))}
+                </div>
+                {summary.recentTransactions.length > transactionsPerPage && (
+                  <div className="flex items-center justify-center gap-4 mt-4 pt-4 border-t border-gray-100">
+                    <button
+                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                      className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <span className="text-sm text-gray-600">
+                      第 {currentPage} / {Math.ceil(summary.recentTransactions.length / transactionsPerPage)} 页
                     </span>
+                    <button
+                      onClick={() => setCurrentPage(p => Math.min(Math.ceil(summary.recentTransactions.length / transactionsPerPage), p + 1))}
+                      disabled={currentPage >= Math.ceil(summary.recentTransactions.length / transactionsPerPage)}
+                      className="p-2 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
           </section>
         </>
+      )}
+
+      {showSpendModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="dao-card max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <ArrowDownCircle className="w-5 h-5 text-red-600" />
+              消费积分
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">消费金额</label>
+                <input
+                  type="number"
+                  value={spendAmount}
+                  onChange={(e) => setSpendAmount(e.target.value)}
+                  placeholder="输入积分数量"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-transparent"
+                />
+              </div>
+              <p className="text-sm text-gray-500">可用积分: {summary?.meritBalance || 0}</p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => { setShowSpendModal(false); setSpendAmount(''); }}
+                className="dao-button-secondary flex-1"
+              >
+                取消
+              </button>
+              <button
+                onClick={() => {
+                  const amount = parseInt(spendAmount);
+                  if (isNaN(amount) || amount <= 0) {
+                    toast.error('请输入有效的积分数量');
+                    return;
+                  }
+                  if (amount > (summary?.meritBalance || 0)) {
+                    toast.error('积分不足');
+                    return;
+                  }
+                  toast.success(`已消费 ${amount} 积分`);
+                  setShowSpendModal(false);
+                  setSpendAmount('');
+                  fetchWallet();
+                }}
+                className="dao-button flex-1"
+              >
+                确认消费
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showDonationModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="dao-card max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <Gift className="w-5 h-5 text-purple-600" />
+              捐赠功德
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">捐赠金额</label>
+                <input
+                  type="number"
+                  value={donationAmount}
+                  onChange={(e) => setDonationAmount(e.target.value)}
+                  placeholder="输入捐赠积分"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                />
+              </div>
+              <p className="text-sm text-gray-500">可用积分: {summary?.meritBalance || 0}</p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => { setShowDonationModal(false); setDonationAmount(''); }}
+                className="dao-button-secondary flex-1"
+              >
+                取消
+              </button>
+              <button
+                onClick={() => {
+                  const amount = parseInt(donationAmount);
+                  if (isNaN(amount) || amount <= 0) {
+                    toast.error('请输入有效的积分数量');
+                    return;
+                  }
+                  if (amount > (summary?.meritBalance || 0)) {
+                    toast.error('积分不足');
+                    return;
+                  }
+                  toast.success(`已捐赠 ${amount} 功德`);
+                  setShowDonationModal(false);
+                  setDonationAmount('');
+                  fetchWallet();
+                }}
+                className="dao-button flex-1"
+              >
+                确认捐赠
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {showTrustModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <div className="dao-card max-w-md w-full">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <CreditCard className="w-5 h-5 text-blue-600" />
+              使用信任额度
+            </h3>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">额度金额</label>
+                <input
+                  type="number"
+                  value={trustAmount}
+                  onChange={(e) => setTrustAmount(e.target.value)}
+                  placeholder="输入额度"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                />
+              </div>
+              <p className="text-sm text-gray-500">可用额度: {summary?.trustQuota || 0}</p>
+            </div>
+            <div className="flex gap-3 mt-6">
+              <button
+                onClick={() => { setShowTrustModal(false); setTrustAmount(''); }}
+                className="dao-button-secondary flex-1"
+              >
+                取消
+              </button>
+              <button
+                onClick={() => {
+                  const amount = parseInt(trustAmount);
+                  if (isNaN(amount) || amount <= 0) {
+                    toast.error('请输入有效的额度');
+                    return;
+                  }
+                  if (amount > (summary?.trustQuota || 0)) {
+                    toast.error('额度不足');
+                    return;
+                  }
+                  toast.success(`已使用 ${amount} 信任额度`);
+                  setShowTrustModal(false);
+                  setTrustAmount('');
+                  fetchWallet();
+                }}
+                className="dao-button flex-1"
+              >
+                确认使用
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

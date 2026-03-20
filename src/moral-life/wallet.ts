@@ -167,7 +167,7 @@ export function makeDonation(
   };
 }
 
-export function useTrustQuota(
+export function spendTrustQuota(
   wallet: MoralWallet,
   amount: number
 ): { wallet: MoralWallet; success: boolean; message: string } {

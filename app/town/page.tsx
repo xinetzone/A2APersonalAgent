@@ -195,7 +195,7 @@ function CharacterCard({ character, isSelected, onToggle }: {
       {isSelected && (
         <div className="mt-4 pt-4 border-t border-gray-100 space-y-3">
           <div className={`p-3 rounded-lg bg-gradient-to-r ${zoneConfig.bgGradient}`}>
-            <p className="text-sm italic text-gray-700">"{character.dialogueExamples[0]}"</p>
+            <p className="text-sm italic text-gray-700">{`'${character.dialogueExamples[0]}'`}</p>
           </div>
 
           <div>

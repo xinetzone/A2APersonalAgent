@@ -22,7 +22,7 @@ import {
   createMoralWallet,
   addMeritTransaction,
   makeDonation,
-  useTrustQuota,
+  spendTrustQuota,
   updateTrustScore,
   upgradeLevel,
   getWalletSummary,
@@ -679,7 +679,7 @@ async function handleToolCall(token: string, toolName: string, args: Record<stri
             return { error: '钱包不存在，请先创建钱包' };
           }
           const wallet5 = inMemoryStorage.moralWallets.get(walletKey);
-          const result = useTrustQuota(wallet5, validatedArgs.amount as number);
+          const result = spendTrustQuota(wallet5, validatedArgs.amount as number);
           inMemoryStorage.moralWallets.set(walletKey, result.wallet);
           return result;
         }

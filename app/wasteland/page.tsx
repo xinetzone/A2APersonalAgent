@@ -164,7 +164,7 @@ export default function WastelandPage() {
           荒域
         </h1>
         <p className="text-lg text-dao-secondary/80 max-w-2xl mx-auto">
-          返璞归真的终极圣地，体验"道法自然"的最高境界
+          返璞归真的终极圣地，体验{`'道法自然'`}的最高境界
         </p>
       </section>
 

@@ -33,6 +33,10 @@ body {
     transform: scale(0.98);
   }
 
+  .dao-button-secondary {
+    @apply bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors duration-200;
+  }
+
   .dao-input {
     @apply w-full px-4 py-2 border border-dao-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-dao-gold transition-shadow duration-200;
   }
@@ -56,5 +60,15 @@ body {
   .content-visibility-auto {
     content-visibility: auto;
     contain-intrinsic-size: 0 500px;
+  }
+
+  /* 隐藏滚动条但保持滚动功能 */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }

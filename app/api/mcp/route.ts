@@ -14,13 +14,6 @@ import {
   addDimensionEvidence,
   updateDimensionTrend,
   applyNaturalDecay,
-  createMoralWallet,
-  addMeritTransaction,
-  makeDonation,
-  useTrustQuota,
-  updateTrustScore,
-  upgradeLevel,
-  getWalletSummary,
   getScenarios,
   processUserChoice,
   getTownCharacters,
@@ -40,6 +33,15 @@ import {
   createWastelandExperience,
   processWastelandMeditation,
 } from '@/moral-life';
+import {
+  createMoralWallet,
+  addMeritTransaction,
+  makeDonation,
+  spendTrustQuota,
+  updateTrustScore,
+  upgradeLevel,
+  getWalletSummary,
+} from '@/moral-life/wallet-optimized';
 import {
   createStorage,
   getStorageManager,
@@ -113,8 +115,11 @@ async function fetchWithToken(token: string, endpoint: string, options: RequestI
       throw new Error(`HTTP ${response.status}: ${errorText}`);
     }
 
-    const result = await response.json() as { data: unknown };
-    return result.data;
+    const result = await response.json();
+    if (result && typeof result === 'object' && 'data' in result) {
+      return result.data;
+    }
+    return result;
   } catch (error) {
     if (error instanceof Error) {
       if (error.message.includes('fetch failed') || (error.cause as { code?: string })?.code === 'UND_ERR_CONNECT_TIMEOUT') {
@@ -126,7 +131,7 @@ async function fetchWithToken(token: string, endpoint: string, options: RequestI
   }
 }
 
-const PUBLIC_TOOLS = ['moral_roundtable', 'dao_daily_guidance', 'dao_topic_guidance', 'dao_quotes_list'];
+const PUBLIC_TOOLS = ['moral_roundtable', 'dao_daily_guidance', 'dao_topic_guidance', 'dao_quotes_list', 'daoist_town', 'wasteland'];
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;

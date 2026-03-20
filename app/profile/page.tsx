@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { User, Save, RefreshCw, Check, LogIn, LogOut, AlertCircle } from 'lucide-react';
+import { User, Save, RefreshCw, Check, LogIn, LogOut, AlertCircle, Info } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 interface DailyGuidance {
@@ -28,6 +28,7 @@ export default function ProfilePage() {
   const [mood, setMood] = useState('');
   const [dailyGuidance, setDailyGuidance] = useState<DailyGuidance | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const fetchDailyGuidance = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -53,23 +54,39 @@ export default function ProfilePage() {
     fetchDailyGuidance();
   }, [fetchDailyGuidance]);
 
+  const clearMessages = useCallback(() => {
+    setError(null);
+    setSuccessMessage(null);
+    setSaved(false);
+  }, []);
+
   const saveAsMemory = useCallback(async () => {
+    clearMessages();
+
     if (!isAuthenticated) {
       setError('请先登录 SecondMe');
+      return;
+    }
+
+    if (!dailyGuidance) {
+      setError('今日箴言尚未加载，请稍后重试');
       return;
     }
 
     if (saving) return;
 
     setSaving(true);
-    setError(null);
-    setSaved(false);
 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 30000);
 
     try {
       const token = localStorage.getItem('secondme_token');
+      if (!token) {
+        setError('登录状态已失效，请重新登录');
+        return;
+      }
+
       const params = new URLSearchParams({ tool: 'dao_save_daily_guidance_memory' });
       if (topic) params.set('topic', topic);
       if (mood) params.set('mood', mood);
@@ -82,10 +99,17 @@ export default function ProfilePage() {
       });
 
       clearTimeout(timeoutId);
-      const data = await res.json();
+
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        throw new Error('服务器响应格式错误，请稍后重试');
+      }
 
       if (!res.ok) {
-        throw new Error(data.error?.message || `请求失败 (${res.status})`);
+        const errorMessage = data.error?.message || data.error || `请求失败 (${res.status})`;
+        throw new Error(errorMessage);
       }
 
       if (data.error) {
@@ -94,15 +118,22 @@ export default function ProfilePage() {
 
       if (data.result) {
         setSaved(true);
-        setTimeout(() => setSaved(false), 3000);
+        setSuccessMessage('记忆保存成功！已存入你的 SecondMe Key Memory');
+        setTimeout(() => {
+          setSaved(false);
+          setSuccessMessage(null);
+        }, 5000);
       } else {
         throw new Error('服务器返回数据格式错误');
       }
     } catch (err) {
       clearTimeout(timeoutId);
       console.error('Failed to save memory:', err);
+      
       if (err instanceof Error && err.name === 'AbortError') {
         setError('请求超时，请检查网络连接后重试');
+      } else if (err instanceof TypeError && err.message.includes('fetch')) {
+        setError('网络连接失败，请检查网络后重试');
       } else {
         setError(err instanceof Error ? err.message : '保存失败，请重试');
       }
@@ -110,7 +141,7 @@ export default function ProfilePage() {
     } finally {
       setSaving(false);
     }
-  }, [isAuthenticated, topic, mood]);
+  }, [isAuthenticated, dailyGuidance, topic, mood, saving, clearMessages]);
 
   if (authLoading) {
     return (
@@ -234,6 +265,13 @@ export default function ProfilePage() {
           保存今日箴言为记忆
         </h3>
 
+        {loading && (
+          <div className="bg-blue-50 text-blue-600 px-4 py-3 rounded-lg mb-4 flex items-center gap-2">
+            <span className="animate-spin">⟳</span>
+            <span className="text-sm">正在加载今日箴言...</span>
+          </div>
+        )}
+
         {dailyGuidance && (
           <div className="bg-dao-secondary/5 rounded-lg p-4 mb-4">
             <p className="text-dao-dark font-medium">
@@ -243,17 +281,30 @@ export default function ProfilePage() {
           </div>
         )}
 
-        {error && (
-          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4 flex items-center gap-2 animate-in fade-in">
-            <AlertCircle className="w-5 h-5 flex-shrink-0" />
-            <span className="text-sm">{error}</span>
+        {!loading && !dailyGuidance && (
+          <div className="bg-yellow-50 text-yellow-700 px-4 py-3 rounded-lg mb-4 flex items-center gap-2">
+            <Info className="w-5 h-5 flex-shrink-0" />
+            <span className="text-sm">今日箴言尚未加载，请刷新页面重试</span>
           </div>
         )}
 
-        {saved && !error && (
-          <div className="bg-green-50 text-green-600 px-4 py-3 rounded-lg mb-4 flex items-center gap-2 animate-in fade-in">
+        {error && (
+          <div className="bg-red-50 text-red-600 px-4 py-3 rounded-lg mb-4 flex items-center gap-2 animate-in fade-in duration-300">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <span className="text-sm flex-1">{error}</span>
+            <button
+              onClick={clearMessages}
+              className="text-red-400 hover:text-red-600 text-xs underline"
+            >
+              关闭
+            </button>
+          </div>
+        )}
+
+        {(saved || successMessage) && !error && (
+          <div className="bg-green-50 text-green-600 px-4 py-3 rounded-lg mb-4 flex items-center gap-2 animate-in fade-in duration-300">
             <Check className="w-5 h-5 flex-shrink-0" />
-            <span className="text-sm">记忆保存成功！</span>
+            <span className="text-sm flex-1">{successMessage || '记忆保存成功！'}</span>
           </div>
         )}
 
@@ -265,9 +316,13 @@ export default function ProfilePage() {
             <input
               type="text"
               value={topic}
-              onChange={(e) => setTopic(e.target.value)}
+              onChange={(e) => {
+                setTopic(e.target.value);
+                if (error) clearMessages();
+              }}
               placeholder="例如：职业发展、人际关系"
               className="dao-input"
+              disabled={saving}
             />
           </div>
 
@@ -278,18 +333,22 @@ export default function ProfilePage() {
             <input
               type="text"
               value={mood}
-              onChange={(e) => setMood(e.target.value)}
+              onChange={(e) => {
+                setMood(e.target.value);
+                if (error) clearMessages();
+              }}
               placeholder="例如：平静、焦虑"
               className="dao-input"
+              disabled={saving}
             />
           </div>
 
           <button
             onClick={saveAsMemory}
-            disabled={saving || !isAuthenticated}
+            disabled={saving || !isAuthenticated || !dailyGuidance}
             className={`dao-button w-full flex items-center justify-center gap-2 transition-all ${
               saved ? 'bg-green-600 hover:bg-green-600' : ''
-            } ${saving ? 'opacity-75 cursor-not-allowed' : ''}`}
+            } ${(saving || !dailyGuidance) ? 'opacity-75 cursor-not-allowed' : ''}`}
           >
             {saving ? (
               <>
@@ -308,6 +367,12 @@ export default function ProfilePage() {
               </>
             )}
           </button>
+          
+          {!dailyGuidance && !loading && (
+            <p className="text-xs text-gray-500 text-center">
+              请等待今日箴言加载完成后再保存
+            </p>
+          )}
         </div>
       </section>
 
