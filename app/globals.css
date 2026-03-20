@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --dao-primary: #8B4513;
+  --dao-secondary: #D2691E;
+  --dao-gold: #B8860B;
+  --dao-dark: #2C1810;
+  --dao-light: #FDF5E6;
+}
+
+body {
+  background-color: var(--dao-light);
+  color: var(--dao-dark);
+  font-family: Georgia, 'Times New Roman', serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .dao-card {
+    @apply bg-white rounded-lg shadow-md p-6 border-l-4 border-dao-primary;
+    contain: content;
+  }
+
+  .dao-button {
+    @apply bg-dao-primary text-white px-4 py-2 rounded-lg hover:bg-dao-secondary transition-colors duration-200;
+    will-change: transform;
+  }
+
+  .dao-button:active {
+    transform: scale(0.98);
+  }
+
+  .dao-input {
+    @apply w-full px-4 py-2 border border-dao-secondary rounded-lg focus:outline-none focus:ring-2 focus:ring-dao-gold transition-shadow duration-200;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .content-visibility-auto {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+  }
+}

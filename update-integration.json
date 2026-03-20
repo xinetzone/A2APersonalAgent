@@ -1,0 +1,83 @@
+{
+  "manifest": {
+    "schemaVersion": "1",
+    "skill": {
+      "key": "a2a-personal-agent",
+      "displayName": "A2A Personal Agent",
+      "description": "基于 SecondMe 平台的 Agent-to-Agent 个人智能代理系统，提供记忆存储、偏好学习和同频用户匹配功能",
+      "keywords": ["a2a", "agent", "secondme", "memory", "matching"]
+    },
+    "prompts": {
+      "activationShort": "查询用户 profile、记忆搜索、发现同频用户、创建记忆时使用",
+      "activationLong": "当用户需要获取 SecondMe Profile 信息、搜索记忆内容、创建新记忆、发现同频用户、计算匹配分数时调用此技能",
+      "systemSummary": "A2A Personal Agent 是基于 SecondMe 平台开发的 Agent-to-Agent 智能代理系统，集成 Key Memory 持久化存储、知乎 API 和匹配引擎功能"
+    },
+    "actions": [
+      {
+        "name": "get_profile",
+        "description": "获取当前用户的 Profile 信息",
+        "toolName": "get_profile",
+        "payloadTemplate": {},
+        "displayHint": "获取用户 Profile"
+      },
+      {
+        "name": "search_memories",
+        "description": "搜索用户的记忆内容",
+        "toolName": "search_memories",
+        "payloadTemplate": {
+          "keyword": "{{keyword}}",
+          "pageNo": "{{pageNo}}",
+          "pageSize": "{{pageSize}}"
+        },
+        "displayHint": "搜索记忆"
+      },
+      {
+        "name": "create_memory",
+        "description": "创建新的记忆",
+        "toolName": "create_memory",
+        "payloadTemplate": {
+          "content": "{{content}}",
+          "visibility": "{{visibility}}"
+        },
+        "displayHint": "创建记忆"
+      },
+      {
+        "name": "discover_users",
+        "description": "发现同频用户",
+        "toolName": "discover_users",
+        "payloadTemplate": {
+          "pageNo": "{{pageNo}}",
+          "pageSize": "{{pageSize}}",
+          "circleType": "{{circleType}}"
+        },
+        "displayHint": "发现同频用户"
+      },
+      {
+        "name": "get_matching_score",
+        "description": "获取与指定用户的匹配分数",
+        "toolName": "get_matching_score",
+        "payloadTemplate": {
+          "targetUsername": "{{targetUsername}}"
+        },
+        "displayHint": "计算匹配分数"
+      }
+    ],
+    "mcp": {
+      "endpoint": "https://a2-a-personal-agent.vercel.app/api/mcp",
+      "timeoutMs": 12000,
+      "toolAllow": ["get_profile", "search_memories", "create_memory", "discover_users", "get_matching_score"],
+      "headersTemplate": {},
+      "authMode": "bearer_token"
+    },
+    "oauth": {
+      "appId": "d3efa163-7af1-424b-afd6-5253734f7d3d",
+      "requiredScopes": ["profile:read", "memory:read", "memory:write"]
+    },
+    "envBindings": {
+      "release": {
+        "enabled": true,
+        "endpoint": "https://a2-a-personal-agent.vercel.app/api/mcp"
+      }
+    }
+  }
+}

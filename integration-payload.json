@@ -1,0 +1,171 @@
+{
+  "manifest": {
+    "schemaVersion": "1",
+    "skill": {
+      "key": "a2a-personal-agent",
+      "displayName": "A2A Personal Agent",
+      "description": "基于 SecondMe 平台的 Agent-to-Agent 个人智能代理系统，提供记忆存储、偏好学习、道德生活（道德小镇/荒域）、圆桌讨论和同频用户匹配功能",
+      "keywords": ["a2a", "agent", "secondme", "memory", "matching", "daoist", "moral-life", "wasteland"]
+    },
+    "prompts": {
+      "activationShort": "查询用户 profile、记忆搜索、发现同频用户、创建记忆、道德小镇/荒域体验时使用",
+      "activationLong": "当用户需要获取 SecondMe Profile 信息、搜索记忆内容、创建新记忆、发现同频用户、计算匹配分数、进入道德小镇或荒域体验、启动圆桌讨论时调用此技能",
+      "systemSummary": "A2A Personal Agent 是基于 SecondMe 平台开发的 Agent-to-Agent 智能代理系统，集成 Key Memory 持久化存储、知乎 API、道德生活系统（道德小镇/荒域/圆桌/钱包）和匹配引擎功能"
+    },
+    "actions": [
+      {
+        "name": "get_profile",
+        "description": "获取当前用户的 Profile 信息",
+        "toolName": "get_profile",
+        "payloadTemplate": {},
+        "displayHint": "获取用户 Profile"
+      },
+      {
+        "name": "search_memories",
+        "description": "搜索用户的记忆内容",
+        "toolName": "search_memories",
+        "payloadTemplate": {
+          "keyword": "{{keyword}}",
+          "pageNo": "{{pageNo}}",
+          "pageSize": "{{pageSize}}"
+        },
+        "displayHint": "搜索记忆"
+      },
+      {
+        "name": "create_memory",
+        "description": "创建新的记忆",
+        "toolName": "create_memory",
+        "payloadTemplate": {
+          "content": "{{content}}",
+          "visibility": "{{visibility}}"
+        },
+        "displayHint": "创建记忆"
+      },
+      {
+        "name": "discover_users",
+        "description": "发现同频用户",
+        "toolName": "discover_users",
+        "payloadTemplate": {
+          "pageNo": "{{pageNo}}",
+          "pageSize": "{{pageSize}}",
+          "circleType": "{{circleType}}"
+        },
+        "displayHint": "发现同频用户"
+      },
+      {
+        "name": "get_matching_score",
+        "description": "获取与指定用户的匹配分数",
+        "toolName": "get_matching_score",
+        "payloadTemplate": {
+          "targetUsername": "{{targetUsername}}"
+        },
+        "displayHint": "计算匹配分数"
+      },
+      {
+        "name": "dao_daily_guidance",
+        "description": "生成一条帛书版道德经风格的今日箴言与行动建议",
+        "toolName": "dao_daily_guidance",
+        "payloadTemplate": {
+          "date": "{{date}}",
+          "topic": "{{topic}}",
+          "mood": "{{mood}}"
+        },
+        "displayHint": "今日道德指引"
+      },
+      {
+        "name": "dao_topic_guidance",
+        "description": "按主题生成道德经风格的指导与反思问题",
+        "toolName": "dao_topic_guidance",
+        "payloadTemplate": {
+          "topic": "{{topic}}",
+          "context": "{{context}}",
+          "mood": "{{mood}}"
+        },
+        "displayHint": "主题道德指引"
+      },
+      {
+        "name": "moral_roundtable",
+        "description": "启动多 Agent 圆桌讨论",
+        "toolName": "moral_roundtable",
+        "payloadTemplate": {
+          "dilemma": "{{dilemma}}",
+          "agents": "{{agents}}",
+          "focus": "{{focus}}"
+        },
+        "displayHint": "启动圆桌讨论"
+      },
+      {
+        "name": "moral_wallet",
+        "description": "道德钱包管理 - 获取余额、赚取功德、消费功德、捐赠等",
+        "toolName": "moral_wallet",
+        "payloadTemplate": {
+          "action": "{{action}}",
+          "userId": "{{userId}}",
+          "source": "{{source}}",
+          "amount": "{{amount}}",
+          "recipient": "{{recipient}}",
+          "note": "{{note}}"
+        },
+        "displayHint": "道德钱包管理"
+      },
+      {
+        "name": "daoist_town",
+        "description": "道德小镇虚拟环境 - 获取角色、进入区域、创建体验",
+        "toolName": "daoist_town",
+        "payloadTemplate": {
+          "action": "{{action}}",
+          "userId": "{{userId}}",
+          "zone": "{{zone}}",
+          "character": "{{character}}",
+          "activity": "{{activity}}",
+          "content": "{{content}}",
+          "emotionalResonance": "{{emotionalResonance}}"
+        },
+        "displayHint": "道德小镇体验"
+      },
+      {
+        "name": "wasteland",
+        "description": "荒域虚拟环境 - 进入荒域、冥想、获取守护者智慧",
+        "toolName": "wasteland",
+        "payloadTemplate": {
+          "action": "{{action}}",
+          "userId": "{{userId}}",
+          "zone": "{{zone}}",
+          "durationMinutes": "{{durationMinutes}}"
+        },
+        "displayHint": "荒域冥想体验"
+      }
+    ],
+    "mcp": {
+      "endpoint": "https://placeholder.example.com/mcp",
+      "timeoutMs": 12000,
+      "toolAllow": [
+        "get_profile",
+        "search_memories",
+        "create_memory",
+        "discover_users",
+        "get_matching_score",
+        "dao_daily_guidance",
+        "dao_topic_guidance",
+        "moral_roundtable",
+        "moral_wallet",
+        "daoist_town",
+        "wasteland"
+      ],
+      "headersTemplate": {},
+      "authMode": "bearer_token"
+    },
+    "oauth": {
+      "appId": "d3efa163-7af1-424b-afd6-5253734f7d3d",
+      "requiredScopes": ["profile:read", "memory:read", "memory:write"]
+    },
+    "envBindings": {
+      "release": {
+        "enabled": false
+      }
+    }
+  },
+  "envSecrets": {
+    "release": null
+  }
+}
