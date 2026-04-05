@@ -86,22 +86,22 @@ export async function GET(request: NextRequest) {
 
     const { accessToken, refreshToken } = result.data;
 
-    const response = NextResponse.redirect(new URL('/profile?login=success', request.url));
-    response.cookies.set('secondme_token', accessToken, {
+    const redirectResponse = NextResponse.redirect(new URL('/profile?login=success', request.url));
+    redirectResponse.cookies.set('secondme_token', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 60 * 60 * 24 * 7 // 7天
     });
     if (refreshToken) {
-      response.cookies.set('secondme_refresh_token', refreshToken, {
+      redirectResponse.cookies.set('secondme_refresh_token', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'strict',
         maxAge: 60 * 60 * 24 * 30 // 30天
       });
     }
-    return response;
+    return redirectResponse;
   } catch (err) {
     console.error('[Callback] Exception:', err);
     return NextResponse.redirect(new URL('/profile?error=server_error', request.url));

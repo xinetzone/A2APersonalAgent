@@ -230,36 +230,36 @@ describe('isVercelKVConfigured', () => {
     process.env = originalEnv;
   });
 
-  it('should return true when KV_URL and KV_HTTP_API_TOKEN are set', () => {
+  it('should return true when KV_URL and KV_HTTP_API_TOKEN are set', async () => {
     process.env = {
       ...originalEnv,
       KV_URL: 'https://test.vercel.ai',
       KV_HTTP_API_TOKEN: 'test-token',
     };
     jest.resetModules();
-    const { isVercelKVConfigured } = require('./vercel-kv');
+    const { isVercelKVConfigured } = await import('./vercel-kv');
     expect(isVercelKVConfigured()).toBe(true);
   });
 
-  it('should return true when KV_REST_API_URL and KV_PREMIUM_API_TOKEN are set', () => {
+  it('should return true when KV_REST_API_URL and KV_PREMIUM_API_TOKEN are set', async () => {
     process.env = {
       ...originalEnv,
       KV_REST_API_URL: 'https://test.vercel.ai',
       KV_PREMIUM_API_TOKEN: 'test-token',
     };
     jest.resetModules();
-    const { isVercelKVConfigured } = require('./vercel-kv');
+    const { isVercelKVConfigured } = await import('./vercel-kv');
     expect(isVercelKVConfigured()).toBe(true);
   });
 
-  it('should return false when no env vars are set', () => {
+  it('should return false when no env vars are set', async () => {
     process.env = { ...originalEnv };
     delete process.env.KV_URL;
     delete process.env.KV_HTTP_API_TOKEN;
     delete process.env.KV_REST_API_URL;
     delete process.env.KV_PREMIUM_API_TOKEN;
     jest.resetModules();
-    const { isVercelKVConfigured } = require('./vercel-kv');
+    const { isVercelKVConfigured } = await import('./vercel-kv');
     expect(isVercelKVConfigured()).toBe(false);
   });
 });

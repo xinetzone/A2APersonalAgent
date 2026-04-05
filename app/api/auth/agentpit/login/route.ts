@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
   const state = randomUUID();
 
   const loginUrl = new URL(OAUTH_URL);
-  loginUrl.searchParams.set('client_id', CLIENT_ID);
+  loginUrl.searchParams.set('client_id', CLIENT_ID!);
   loginUrl.searchParams.set('redirect_uri', redirectUri);
   loginUrl.searchParams.set('response_type', 'code');
   loginUrl.searchParams.set('state', state);

@@ -137,7 +137,7 @@
       }
     ],
     "mcp": {
-      "endpoint": "https://placeholder.example.com/mcp",
+      "endpoint": "http://localhost:3003/mcp",
       "timeoutMs": 12000,
       "toolAllow": [
         "get_profile",
@@ -147,8 +147,15 @@
         "get_matching_score",
         "dao_daily_guidance",
         "dao_topic_guidance",
+        "dao_quotes_list",
+        "dao_save_daily_guidance_memory",
         "moral_roundtable",
+        "moral_companion",
+        "moral_credit",
+        "moral_training_camp",
+        "moral_decision_support",
         "moral_wallet",
+        "life_monetization",
         "daoist_town",
         "wasteland"
       ],
@@ -161,7 +168,8 @@
     },
     "envBindings": {
       "release": {
-        "enabled": false
+        "enabled": true,
+        "endpoint": "http://localhost:3003/mcp"
       }
     }
   },

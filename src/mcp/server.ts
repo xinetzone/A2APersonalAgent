@@ -885,7 +885,7 @@ const server = http.createServer(async (req, res) => {
   }
 });
 
-const rawPort = Number(3001);
+const rawPort = Number(3003);
 const PORT = Number.isFinite(rawPort)
   ? Math.max(1, Math.min(65535, Math.trunc(rawPort)))
   : 3001;

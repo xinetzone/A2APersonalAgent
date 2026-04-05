@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 // 敏感信息的正则表达式模式
 const sensitivePatterns = [

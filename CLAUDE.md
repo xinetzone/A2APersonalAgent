@@ -204,6 +204,8 @@ The `Dockerfile` builds the backend (`npm run build:server`) and copies the `dis
 - **Project documentation**: Start from `doc/home.md` (entry). Core docs: `doc/a2a-personal-agent/architecture/v1.0.0/spec.md`, `doc/a2a-personal-agent/development/v1.0.0/tasks.md`, `doc/a2a-personal-agent/development/v1.0.0/checklist.md`.
 - **Optimization tracking**: See `OPTIMIZATION.md` for comprehensive optimization report including 56 passing tests, security enhancements, and performance improvements.
 - **TypeScript Configs**: `tsconfig.json` is for Next.js (no emit). `tsconfig.server.json` is for backend compilation (output to `dist/`).
+- **Module System**: The project uses **ECMAScript Modules (ESM)** exclusively. All code files must use ESM syntax (import/export) instead of CommonJS syntax (require/module.exports).
+
 
 ## Reference Links
 

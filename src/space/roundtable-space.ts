@@ -1,5 +1,5 @@
 import { Space, SpaceType, SpaceMessage } from './types';
-import { SpaceEngine } from './engine';
+import { SpaceEngine, getSpaceEngine } from './engine';
 import {
   RoundTableSession,
   RoundTableDiscussion,
@@ -246,10 +246,7 @@ let roundTableSpaceManagerInstance: RoundTableSpaceManager | null = null;
 
 export function getRoundTableSpaceManager(spaceEngine?: SpaceEngine): RoundTableSpaceManager {
   if (!roundTableSpaceManagerInstance) {
-    const engine = spaceEngine || (() => {
-      const engineFn = require('./engine');
-      return engineFn.getSpaceEngine();
-    })();
+    const engine = spaceEngine || getSpaceEngine();
     roundTableSpaceManagerInstance = new RoundTableSpaceManager(engine);
   }
   return roundTableSpaceManagerInstance;

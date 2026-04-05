@@ -77,30 +77,30 @@ describe('Storage Factory', () => {
   });
 
   describe('isCloudStorageAvailable', () => {
-    it('should return true when KV is configured', () => {
+    it('should return true when KV is configured', async () => {
       process.env.KV_URL = 'https://test.vercel.ai';
       process.env.KV_HTTP_API_TOKEN = 'test-token';
 
       jest.resetModules();
-      const { isCloudStorageAvailable } = require('./factory');
+      const { isCloudStorageAvailable } = await import('./factory');
       expect(isCloudStorageAvailable()).toBe(true);
     });
 
-    it('should return true when Postgres is configured', () => {
+    it('should return true when Postgres is configured', async () => {
       process.env.POSTGRES_CONNECTION_STRING = 'postgresql://test:test@localhost:5432/testdb';
 
       jest.resetModules();
-      const { isCloudStorageAvailable } = require('./factory');
+      const { isCloudStorageAvailable } = await import('./factory');
       expect(isCloudStorageAvailable()).toBe(true);
     });
 
-    it('should return false when no cloud storage is configured', () => {
+    it('should return false when no cloud storage is configured', async () => {
       delete process.env.KV_URL;
       delete process.env.KV_HTTP_API_TOKEN;
       delete process.env.POSTGRES_CONNECTION_STRING;
 
       jest.resetModules();
-      const { isCloudStorageAvailable } = require('./factory');
+      const { isCloudStorageAvailable } = await import('./factory');
       expect(isCloudStorageAvailable()).toBe(false);
     });
   });

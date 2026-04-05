@@ -7,7 +7,7 @@ import {
   TriggerType,
   RelationRecommendation,
 } from './types';
-import { RelationshipGraph } from './relationship';
+import { RelationshipGraph, getRelationshipGraph } from './relationship';
 
 const CONNECTION_TTL = 7 * 24 * 60 * 60 * 1000;
 const MATCH_THRESHOLD = 70;
@@ -424,10 +424,7 @@ export function getConnectionTrigger(
   notificationCallback?: (notification: ConnectionNotification) => Promise<void>
 ): ConnectionTrigger {
   if (!connectionTriggerInstance) {
-    const rg = relationshipGraph || (() => {
-      const rgFn = require('./relationship');
-      return rgFn.getRelationshipGraph();
-    })();
+    const rg = relationshipGraph || getRelationshipGraph();
     connectionTriggerInstance = new ConnectionTrigger(
       rg,
       storage,

@@ -36,7 +36,7 @@ export default function AgentPitLoginPage() {
       sessionStorage.setItem('agentpit_oauth_state', state);
 
       const params = new URLSearchParams({
-        client_id: CLIENT_ID,
+        client_id: CLIENT_ID!,
         redirect_uri: redirectUri,
         response_type: 'code',
         state,

@@ -269,21 +269,21 @@ describe('isVercelPostgresConfigured', () => {
     process.env = originalEnv;
   });
 
-  it('should return true when POSTGRES_CONNECTION_STRING is set', () => {
+  it('should return true when POSTGRES_CONNECTION_STRING is set', async () => {
     process.env = {
       ...originalEnv,
       POSTGRES_CONNECTION_STRING: 'postgresql://test:test@localhost:5432/testdb',
     };
     jest.resetModules();
-    const { isVercelPostgresConfigured } = require('./vercel-postgres');
+    const { isVercelPostgresConfigured } = await import('./vercel-postgres');
     expect(isVercelPostgresConfigured()).toBe(true);
   });
 
-  it('should return false when POSTGRES_CONNECTION_STRING is not set', () => {
+  it('should return false when POSTGRES_CONNECTION_STRING is not set', async () => {
     process.env = { ...originalEnv };
     delete process.env.POSTGRES_CONNECTION_STRING;
     jest.resetModules();
-    const { isVercelPostgresConfiguring } = require('./vercel-postgres');
+    const { isVercelPostgresConfigured } = await import('./vercel-postgres');
     expect(isVercelPostgresConfigured()).toBe(false);
   });
 });

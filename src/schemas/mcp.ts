@@ -57,6 +57,41 @@ export const ToolArgumentsSchemas = {
     mood: z.string().max(50).optional(),
     visibility: z.number().int().min(1).max(2).default(1),
   }),
+
+  moral_wallet: z.object({
+    action: z.enum(['get_balance', 'get_summary', 'earn_merit', 'spend_merit', 'donate', 'use_trust_quota', 'upgrade_level', 'create_wallet']),
+    userId: z.string().min(1, '用户ID不能为空'),
+    source: z.string().optional(),
+    amount: z.number().optional(),
+    recipient: z.string().optional(),
+    isAnonymous: z.boolean().optional(),
+    note: z.string().optional(),
+    newLevel: z.enum(['闻道', '悟道', '行道', '得道', '同道']).optional(),
+    name: z.string().optional(),
+  }),
+
+  moral_roundtable: z.object({
+    dilemma: z.string().min(1, '道德困境描述不能为空'),
+    agents: z.array(z.string()).optional(),
+    focus: z.string().optional(),
+  }),
+
+  daoist_town: z.object({
+    action: z.enum(['get_characters', 'get_zones', 'get_narrative', 'create_experience', 'get_state', 'enter_zone']),
+    userId: z.string().min(1, '用户ID不能为空'),
+    zone: z.enum(['道场', '市集', '山林', '水域', '静室']).optional(),
+    character: z.string().optional(),
+    activity: z.string().optional(),
+    content: z.string().optional(),
+    emotionalResonance: z.number().min(1).max(10).optional(),
+  }),
+
+  wasteland: z.object({
+    action: z.enum(['get_zones', 'can_enter', 'enter', 'meditate', 'get_wisdom']),
+    userId: z.string().min(1, '用户ID不能为空'),
+    zone: z.enum(['太虚', '玄墟', '浑沌', '无无']).optional(),
+    durationMinutes: z.number().optional(),
+  }),
 } as const;
 
 export type ToolName = keyof typeof ToolArgumentsSchemas;
