@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, User, Lock, AlertCircle, Loader2, CheckCircle, ArrowLeft, Sparkles } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';

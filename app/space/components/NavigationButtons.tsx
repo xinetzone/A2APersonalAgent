@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { ArrowLeft, ArrowRight, Sparkles, Loader2 } from 'lucide-react';
 
 interface NavigationButtonsProps {

@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { User, Save, RefreshCw, Check, LogIn, LogOut, AlertCircle, Info } from 'lucide-react';
+import Image from 'next/image';
 import { useAuth } from '../context/AuthContext';
 
 interface DailyGuidance {
@@ -224,9 +225,16 @@ export default function ProfilePage() {
 
       <section className="dao-card">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-dao-gold/20 flex items-center justify-center overflow-hidden">
+          <div className="w-16 h-16 rounded-full bg-dao-gold/20 flex items-center justify-center overflow-hidden relative">
             {user?.avatarUrl ? (
-              <img src={user.avatarUrl} alt={user.name || ''} className="w-full h-full object-cover" />
+              <Image 
+                src={user.avatarUrl} 
+                alt={user.name || ''} 
+                width={64} 
+                height={64} 
+                className="w-full h-full object-cover rounded-full"
+                priority
+              />
             ) : (
               <User className="w-8 h-8 text-dao-gold" />
             )}

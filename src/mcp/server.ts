@@ -142,10 +142,11 @@ async function cachedFetch<T>(cacheKey: string, fetchFn: () => Promise<T>): Prom
 }
 
 function invalidateCache(pattern: string): void {
-  const keys = [...pendingRequests.keys(), ...Array.from({ length: 1000 }, (_, i) => `key_${i}`)];
-  for (const key of keys) {
+  requestCache.invalidatePattern(pattern);
+  // 也清理相关的待处理请求
+  for (const key of pendingRequests.keys()) {
     if (key.startsWith(pattern)) {
-      requestCache.invalidate(key);
+      pendingRequests.delete(key);
     }
   }
 }

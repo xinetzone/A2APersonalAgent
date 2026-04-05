@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { BookOpen, Users, Sword, Award, Wallet, Map, Sparkles, ArrowRight, LogIn } from 'lucide-react';
 import { useAuth } from './context/AuthContext';
@@ -65,11 +65,11 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   Sparkles,
 };
 
-function FeatureIcon({ name, className }: { name: string; className?: string }) {
+const FeatureIcon = React.memo(function FeatureIcon({ name, className }: { name: string; className?: string }) {
   const Icon = ICON_MAP[name];
   if (!Icon) return null;
   return <Icon className={className} />;
-}
+});
 
 export default function HomePage() {
   const { isAuthenticated } = useAuth();

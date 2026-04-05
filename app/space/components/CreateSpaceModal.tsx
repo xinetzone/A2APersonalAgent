@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import { X, Sparkles, CheckCircle, AlertCircle, Loader2, WifiOff, Wifi, Server, RefreshCw } from 'lucide-react';
@@ -106,7 +106,7 @@ function useProgressSimulation(
     };
 
     requestAnimationFrame(animate);
-  }, [isActive, targetProgress, duration]);
+  }, [isActive, targetProgress, duration, progress]);
 
   return progress;
 }
@@ -315,11 +315,6 @@ export default function CreateSpaceModal({ isOpen, onClose, onCreated }: CreateS
     [currentStep]
   );
 
-  const handleRetry = useCallback(() => {
-    setLoadingStatus({ state: 'idle', message: '', progress: 0, canRetry: false });
-    handleSubmit();
-  }, []);
-
   const handleSubmit = useCallback(async () => {
     setLoadingStatus({ state: 'validating', message: '验证中...', progress: 0, canRetry: false });
 
@@ -397,6 +392,11 @@ export default function CreateSpaceModal({ isOpen, onClose, onCreated }: CreateS
       toast.error(message);
     }
   }, [name, description, maxParticipants, user, type, isPrivate, initialTopic, onCreated, onClose, router]);
+
+  const handleRetry = useCallback(() => {
+    setLoadingStatus({ state: 'idle', message: '', progress: 0, canRetry: false });
+    handleSubmit();
+  }, [handleSubmit]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

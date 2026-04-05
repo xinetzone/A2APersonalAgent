@@ -122,26 +122,11 @@ export default function SpaceDetailPage() {
 
   const spaceId = params.id as string;
 
-  useEffect(() => {
-    fetchSpaceInfo();
-    fetchMessages();
-
-    const interval = setInterval(() => {
-      fetchMessages();
-    }, 5000);
-
-    return () => clearInterval(interval);
-  }, [spaceId]);
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  const fetchSpaceInfo = async () => {
+  const fetchSpaceInfo = useCallback(async () => {
     try {
       const token = localStorage.getItem('secondme_token');
       const res = await fetch(`/api/space/${spaceId}`, {
@@ -164,9 +149,9 @@ export default function SpaceDetailPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [spaceId, user, router]);
 
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     try {
       const token = localStorage.getItem('secondme_token');
       const res = await fetch(`/api/space/${spaceId}/messages?limit=50`, {
@@ -179,7 +164,22 @@ export default function SpaceDetailPage() {
     } catch (error) {
       console.error('Failed to fetch messages:', error);
     }
-  };
+  }, [spaceId]);
+
+  useEffect(() => {
+    fetchSpaceInfo();
+    fetchMessages();
+
+    const interval = setInterval(() => {
+      fetchMessages();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [spaceId, fetchSpaceInfo, fetchMessages]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   const handleJoin = async () => {
     if (!user) return;

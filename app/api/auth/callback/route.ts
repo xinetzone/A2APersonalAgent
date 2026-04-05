@@ -19,7 +19,7 @@ interface TokenResponse {
 function getRedirectUri(request: NextRequest): string {
   const isProduction = process.env.VERCEL === 'true';
   if (isProduction) {
-    return 'https://a2-a-personal-agent.vercel.app/api/auth/callback';
+    return 'https://pagent.agentpit.io/api/auth/callback';
   }
   const host = request.headers.get('host') || 'localhost:3001';
   const protocol = host.includes('localhost') ? 'http' : 'https';

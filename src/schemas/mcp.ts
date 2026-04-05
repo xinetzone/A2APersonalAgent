@@ -6,7 +6,7 @@ export const MCPRequestSchema = z.object({
   method: z.string(),
   params: z.object({
     name: z.string().optional(),
-    arguments: z.record(z.unknown()).optional(),
+    arguments: z.record(z.string(), z.unknown()).optional(),
   }).optional(),
 });
 
@@ -106,7 +106,7 @@ export function validateToolArguments(toolName: string, args: Record<string, unk
     return { valid: true, data: result };
   } catch (error) {
     if (error instanceof z.ZodError) {
-      const messages = error.errors.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
+      const messages = error.issues.map(e => `${e.path.join('.')}: ${e.message}`).join('; ');
       return { valid: false, error: messages };
     }
     return { valid: false, error: 'Validation failed' };

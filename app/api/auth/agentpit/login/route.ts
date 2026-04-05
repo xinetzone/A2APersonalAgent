@@ -7,6 +7,15 @@ const CLIENT_SECRET = process.env.AGENTPIT_CLIENT_SECRET;
 if (!CLIENT_ID || !CLIENT_SECRET) {
   throw new Error('AGENTPIT_CLIENT_ID and AGENTPIT_CLIENT_SECRET must be configured');
 }
+
+// 验证客户端 ID 是否为测试值
+if (CLIENT_ID === 'test_agentpit_client_id' || CLIENT_SECRET === 'test_agentpit_client_secret') {
+  console.warn('[AgentPit Login] Using test credentials. This should only be used in development.');
+  // 在生产环境中拒绝使用测试凭据
+  if (process.env.VERCEL === 'true') {
+    throw new Error('Test credentials cannot be used in production');
+  }
+}
 const OAUTH_URL = 'https://go.second.me/oauth/';
 
 const PUBLIC_HOST = process.env.PUBLIC_HOST || 'pagent.agentpit.io';

@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 import { AuthProvider } from './context/AuthContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

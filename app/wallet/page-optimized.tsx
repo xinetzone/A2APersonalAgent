@@ -327,6 +327,20 @@ export default function WalletPage() {
     }
   }, [isAuthenticated, getUserId, fetchWithRetry]);
 
+  // 重置表单
+  const resetForm = useCallback(() => {
+    setWalletName('');
+    setPassword('');
+    setSecurityCode('');
+    setSelectedLevel('闻道');
+    setEthicalCriteria({
+      enableTransparency: true,
+      enablePrivacy: true,
+      autoReportEnabled: false,
+      requireTwoFactor: true,
+    });
+  }, []);
+
   // 创建钱包
   const handleCreateWallet = useCallback(async () => {
     if (!walletName.trim()) {
@@ -379,7 +393,7 @@ export default function WalletPage() {
     } finally {
       setLoading(false);
     }
-  }, [walletName, password, securityCode, selectedLevel, getUserId, fetchWithRetry, fetchWallet]);
+  }, [walletName, password, securityCode, selectedLevel, getUserId, fetchWithRetry, fetchWallet, resetForm]);
 
   // 获取功德
   const earnMerit = useCallback(async (source: string) => {
@@ -412,20 +426,6 @@ export default function WalletPage() {
       setLoading(false);
     }
   }, [summary, getUserId, fetchWithRetry, fetchWallet]);
-
-  // 重置表单
-  const resetForm = useCallback(() => {
-    setWalletName('');
-    setPassword('');
-    setSecurityCode('');
-    setSelectedLevel('闻道');
-    setEthicalCriteria({
-      enableTransparency: true,
-      enablePrivacy: true,
-      autoReportEnabled: false,
-      requireTwoFactor: true,
-    });
-  }, []);
 
   // 初始加载
   useEffect(() => {

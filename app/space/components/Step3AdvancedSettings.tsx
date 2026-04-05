@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { UserPlus, Lock, Globe, AlertCircle, Users } from 'lucide-react';
 import { spaceTypeConfig } from './StepIndicator';
 

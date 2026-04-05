@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Wallet, Coins, Gift, ArrowUpDown, Plus, History, Shield, CheckCircle, XCircle, AlertCircle, Settings, Lock, User, Eye, EyeOff, ChevronLeft, ChevronRight, CreditCard, TrendingUp, ArrowUpCircle, ArrowDownCircle } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { toast } from 'sonner';
@@ -132,7 +132,6 @@ export default function WalletPage() {
   const [networkError, setNetworkError] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [transactionsPerPage] = useState(5);
-  const [displayedTransactions, setDisplayedTransactions] = useState<WalletSummary['recentTransactions']>([]);
   const [showSpendModal, setShowSpendModal] = useState(false);
   const [showDonationModal, setShowDonationModal] = useState(false);
   const [showTrustModal, setShowTrustModal] = useState(false);
@@ -146,7 +145,7 @@ export default function WalletPage() {
     return `user-${Date.now()}`;
   }, [user]);
 
-  const fetchWallet = async () => {
+  const fetchWallet = useCallback(async () => {
     setLoading(true);
     setNetworkError(false);
     try {
@@ -188,7 +187,7 @@ export default function WalletPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [getUserId]);
 
   const validateSecurityCode = (code: string): boolean => {
     const pattern = /^[0-9]{6}$/;
@@ -346,14 +345,15 @@ export default function WalletPage() {
     if (isAuthenticated && user) {
       fetchWallet();
     }
-  }, [isAuthenticated, user]);
+  }, [isAuthenticated, user, fetchWallet]);
 
-  useEffect(() => {
+  const displayedTransactions = useMemo(() => {
     if (summary?.recentTransactions) {
       const start = (currentPage - 1) * transactionsPerPage;
       const end = start + transactionsPerPage;
-      setDisplayedTransactions(summary.recentTransactions.slice(start, end));
+      return summary.recentTransactions.slice(start, end);
     }
+    return [];
   }, [summary, currentPage, transactionsPerPage]);
 
   const renderAuthStep = () => (

@@ -28,6 +28,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.redirect(new URL('/profile?error=server_not_configured', request.url));
   }
 
+  // 验证客户端 ID 是否为测试值
+  if (clientId === 'test_client_id' || clientSecret === 'test_client_secret') {
+    console.warn('[Login] Using test credentials. This should only be used in development.');
+    // 在生产环境中拒绝使用测试凭据
+    if (process.env.VERCEL === 'true') {
+      return NextResponse.redirect(new URL('/profile?error=invalid_credentials', request.url));
+    }
+  }
+
   const redirectUri = getRedirectUri(request);
   const state = randomUUID();
   

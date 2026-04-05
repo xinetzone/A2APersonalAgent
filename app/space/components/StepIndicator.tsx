@@ -1,6 +1,6 @@
 'use client';
 
-import { memo } from 'react';
+import React, { memo } from 'react';
 import { Check, MessageCircle, ShoppingBag, Coffee, FileText, Settings } from 'lucide-react';
 
 interface Step {

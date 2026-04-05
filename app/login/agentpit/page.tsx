@@ -1,12 +1,18 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 const CLIENT_ID = process.env.NEXT_PUBLIC_AGENTPIT_CLIENT_ID;
 
 if (!CLIENT_ID) {
   throw new Error('NEXT_PUBLIC_AGENTPIT_CLIENT_ID must be configured');
+}
+
+// 验证客户端 ID 是否为测试值
+const isTestCredentials = CLIENT_ID === 'test_agentpit_client_id';
+if (isTestCredentials) {
+  console.warn('[AgentPit Login] Using test credentials. This should only be used in development.');
 }
 const OAUTH_URL = 'https://go.second.me/oauth/';
 
@@ -65,6 +71,12 @@ export default function AgentPitLoginPage() {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg mb-6 text-sm">
             <strong>登录失败：</strong> {error}
+          </div>
+        )}
+
+        {isTestCredentials && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-600 p-4 rounded-lg mb-6 text-sm">
+            <strong>测试环境警告：</strong> 当前使用的是测试凭据，仅用于开发环境。
           </div>
         )}
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback, useRef, useEffect, useState } from 'react';
+import React, { memo, useCallback, useRef, useEffect, useState } from 'react';
 import { CheckCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { spaceTypeConfig, iconComponents } from './StepIndicator';
 

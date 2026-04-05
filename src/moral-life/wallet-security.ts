@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { Buffer } from 'buffer';
 
 /**
  * 钱包安全模块 - 提供加密、验证和安全存储功能

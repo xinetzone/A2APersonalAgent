@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import React, { memo, useCallback } from 'react';
 import { AlertCircle, Sparkles } from 'lucide-react';
 import { iconComponents, spaceTypeConfig } from './StepIndicator';
 
