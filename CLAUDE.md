@@ -4,13 +4,14 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-This workspace contains the **A2A Personal Agent Platform** – an Agent-to-Agent system built on SecondMe, with integrated memory, preference learning, and matching capabilities. The platform features a comprehensive moral-life system (钱包/功德、修身、训练等) and a modern Next.js frontend. Locally installed **SecondMe Skills** enable development and user interaction with the SecondMe platform.
+This workspace contains the **A2A Personal Agent Platform** – an Agent-to-Agent system built on SecondMe, with integrated memory, preference learning, and matching capabilities. The platform features a comprehensive moral-life system (钱包/功德、修身、训练等) and a modern Next.js frontend.
 
-The workspace has three primary components:
+The workspace has two primary components:
 
 - **A2A Personal Agent Backend** (`src/`, `tsconfig.server.json`) – TypeScript project implementing the personal agent engine, A2A protocol, memory system, preference engine, matching algorithms, moral-life system, and an MCP server.
 - **Next.js Frontend** (`app/`, `tsconfig.json`) – React-based web interface built with Next.js 14, featuring pages for wallet, training, profile, topics, quotes, town, roundtable, wasteland, and credit.
-- **SecondMe Skills** (`.agents/skills/`) – locally installed Claude Code skills for SecondMe integration (development and end‑user use). The source repository is not present; skills are installed via `npx skills add`.
+
+For information about SecondMe Skills and agent-related functionality, see `AGENTS.md`.
 
 ## Development Commands
 
@@ -193,52 +194,15 @@ docker-compose up -d
 
 The `Dockerfile` builds the backend (`npm run build:server`) and copies the `dist/` folder; the frontend is not included in the container. The service listens on `MCP_PORT` (default 3000).
 
-## Skills Development
 
-### Skill Format
-Each skill is a Markdown file (`SKILL.md`) with a YAML header that declares:
-- `name` – the skill's identifier (e.g., `secondme`)
-- `description` – when Claude should invoke the skill
-- `user‑invocable: true` if the skill can be triggered by a slash command (e.g., `/secondme`)
-
-The body contains detailed instructions for Claude, including API endpoints, authentication flows, user prompts, and error handling.
-
-### Available Skills (`.agents/skills/`)
-- `secondme/` – unified OpenClaw skill for end‑user interaction (login, profile, Plaza, Discover, Key Memory, Activity, third‑party skill management)
-- `secondme‑init/` – project initialization and module selection
-- `secondme‑prd/` – product requirement definition via conversation
-- `secondme‑nextjs/` – generates a full‑stack Next.js project based on config and PRD
-- `secondme‑reference/` – opens the SecondMe API technical reference
-- `secondme‑dev‑assistant/` – turns existing projects into MCP integrations
-- `frontend‑design/` – front‑end design skill
-- `skill‑creator/` – creates new skills
-
-### Using Skills
-```bash
-# Full development workflow
-/secondme
-
-# Step‑by‑step
-/secondme‑init          # configure project
-/secondme‑prd           # define requirements
-/secondme‑nextjs        # generate Next.js project
-/secondme‑reference     # open API docs
-```
-
-### Skill Updates
-- The `.agents/skills/` directory is a local installation; the source repository is not present in this workspace.
-- To refresh skills, re‑add them via `npx skills add Mindverse/Second‑Me‑Skills` (or a local path if the source repo is available).
-- After editing a `SKILL.md` file, you may need to re‑add the skill for changes to take effect.
 
 ## Important Notes
 
 - **Credentials**: Never commit `.secondme/` or `~/.openclaw/.credentials`; they contain OAuth tokens and secrets.
 - **Environment Variables**: Copy `.env.example` to `.env.local` and fill in required values (`SECONDME_CLIENT_ID`, `SECONDME_CLIENT_SECRET`, `ZHIHU_API_KEY`, etc.).
-- **Skill updates**: The `.agents/skills/` directory may be out of sync with the source. To refresh, re‑add the skill or manually copy the `SKILL.md` files.
 - **MCP bearer‑token handling**: For user‑scoped integrations, the MCP service must resolve the SecondMe user from the incoming bearer token – do not treat it as a static API key.
 - **Project documentation**: Start from `doc/home.md` (entry). Core docs: `doc/a2a-personal-agent/architecture/v1.0.0/spec.md`, `doc/a2a-personal-agent/development/v1.0.0/tasks.md`, `doc/a2a-personal-agent/development/v1.0.0/checklist.md`.
 - **Optimization tracking**: See `OPTIMIZATION.md` for comprehensive optimization report including 56 passing tests, security enhancements, and performance improvements.
-- **Claude Code settings**: Permissions for `npx skills` and `curl` are allowed via `.claude/settings.local.json`.
 - **TypeScript Configs**: `tsconfig.json` is for Next.js (no emit). `tsconfig.server.json` is for backend compilation (output to `dist/`).
 
 ## Reference Links

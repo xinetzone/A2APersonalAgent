@@ -29,9 +29,17 @@ class ProductionStorageManager implements StorageManager {
   private cloudAdapter: CloudStorageAdapter<any> | null = null;
 
   constructor(type: StorageType) {
-    this.provider = type;
+    let actualProvider: StorageType = type;
 
-    if (type === 'kv' && isVercelKVConfigured()) {
+    if (type === 'kv' && !isVercelKVConfigured()) {
+      actualProvider = 'file';
+    } else if (type === 'postgres' && !isVercelPostgresConfigured()) {
+      actualProvider = 'file';
+    }
+
+    this.provider = actualProvider;
+
+    if (actualProvider === 'kv' && isVercelKVConfigured()) {
       const kvStorage = new VercelKVStorage({
         url: KV_STORAGE_CONFIG.url,
         restApiUrl: KV_STORAGE_CONFIG.restApiUrl,
@@ -47,7 +55,7 @@ class ProductionStorageManager implements StorageManager {
       this.worldStateStorage = new KVNamespaceAdapter(kvStorage, 'world-state:');
 
       logger.info({ provider: 'kv' }, 'Storage initialized with Vercel KV');
-    } else if (type === 'postgres' && isVercelPostgresConfigured()) {
+    } else if (actualProvider === 'postgres' && isVercelPostgresConfigured()) {
       const pgAdapter = new VercelPostgresStorage({
         connectionString: POSTGRES_STORAGE_CONFIG.connectionString!,
         maxConnections: POSTGRES_STORAGE_CONFIG.maxConnections,

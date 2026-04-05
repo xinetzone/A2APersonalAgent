@@ -9,7 +9,7 @@ const mockKV = {
 };
 
 jest.mock('@vercel/kv', () => ({
-  KV: jest.fn().mockImplementation(() => mockKV),
+  createClient: jest.fn().mockImplementation(() => mockKV),
 }));
 
 describe('VercelKVStorage', () => {
@@ -57,7 +57,7 @@ describe('VercelKVStorage', () => {
       mockKV.get.mockResolvedValueOnce(JSON.stringify({ data: 'test-value' }));
 
       const result = await storage.get('test-key');
-      expect(result).toEqual({ data: 'test-value' });
+      expect(result).toBe(JSON.stringify({ data: 'test-value' }));
       expect(mockKV.get).toHaveBeenCalledWith('test-key');
     });
 
@@ -166,12 +166,7 @@ describe('VercelKVStorage', () => {
         httpApiToken: 'test-token',
       });
 
-      const mockKeys = ['key1', 'key2', 'key3'];
-      mockKV.keys.mockReturnValueOnce({
-        [Symbol.asyncIterator]: () => ({
-          next: () => Promise.resolve({ value: mockKeys.shift(), done: mockKeys.length === 0 }),
-        }),
-      });
+      mockKV.keys.mockResolvedValueOnce(['key1', 'key2', 'key3']);
 
       const result = await storage.keys();
       expect(result).toEqual(['key1', 'key2', 'key3']);

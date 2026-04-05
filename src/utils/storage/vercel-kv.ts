@@ -57,11 +57,12 @@ export class VercelKVStorage implements CloudStorageAdapter<unknown> {
       }, { maxAttempts: 3, baseDelay: 500 });
 
       if (result === null || result === undefined) {
-        this.metrics.misses++;
-      } else {
-        this.metrics.hits++;
-      }
+      this.metrics.misses++;
+      return undefined;
+    } else {
+      this.metrics.hits++;
       return result;
+    }
     } catch (error) {
       this.metrics.errors++;
       logger.error({ error, key }, 'VercelKV get error');
@@ -72,7 +73,7 @@ export class VercelKVStorage implements CloudStorageAdapter<unknown> {
   async set(key: string, value: unknown): Promise<void> {
     if (!this.kv) {
       this.metrics.errors++;
-      return;
+      throw new Error('Vercel KV storage not initialized');
     }
 
     try {

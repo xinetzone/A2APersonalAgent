@@ -153,4 +153,5 @@ _build/
 .temp.md
 
 pagent.nginx
-.agents/
+.agents/**/desensitization_report.md
+.trae/specs/
