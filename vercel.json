@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/mcp",
+      "dest": "/api/mcp"
+    }
+  ],
+  "env": {
+    "MCP_ENDPOINT": "https://a2-a-personal-agent.vercel.app/api/mcp"
+  }
+}
